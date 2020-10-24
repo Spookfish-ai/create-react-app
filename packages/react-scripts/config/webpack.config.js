@@ -165,6 +165,16 @@ module.exports = function (webpackEnv) {
     return loaders;
   };
 
+  const getCustomWebpackLoaders = () => {
+    if (fs.existsSync(paths.webpackLoaders)) {
+      console.info('Using custom webpack loaders');
+      return require(paths.webpackLoaders);
+    } else {
+      console.warn('No additional webpack loaders found');
+      return [];
+    }
+  };
+
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
@@ -407,7 +417,7 @@ module.exports = function (webpackEnv) {
                   'babel-preset-react-app/webpack-overrides'
                 ),
                 // @remove-on-eject-begin
-                babelrc: false,
+                babelrc: true,
                 configFile: false,
                 presets: [
                   [
@@ -572,6 +582,7 @@ module.exports = function (webpackEnv) {
                 'sass-loader'
               ),
             },
+            ...getCustomWebpackLoaders(),
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
             // In production, they would get copied to the `build` folder.
